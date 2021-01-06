@@ -1,0 +1,16 @@
+.gameField {
+    .row {
+        display: flex;
+        flex-direction: row;
+        width: 100vw;
+        height: 20px;
+        margin: 0 0 3px 0;
+        div{
+            height: 20px;
+            width: 20px;
+            border: solid black 1px;
+            margin: 0 0 3px 3px;
+            background-color: gray;
+        }
+    }
+}
