@@ -4,7 +4,7 @@ import Game from './components/Game';
 import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import './App.css';
 
-const domain = "ws://127.0.0.1:8000";
+const domain = "wss://mp-minesweeper.herokuapp.com";
 export default class App extends React.Component {
   render(){
     return (

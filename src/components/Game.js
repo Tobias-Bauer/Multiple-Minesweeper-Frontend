@@ -39,7 +39,7 @@ class Game extends React.Component {
         } else if (el.n_mines === 8) {
             child.style.setProperty("color", "lightgray")
         }
-        if(el.flagged){
+        if (el.flagged) {
             child.innerHTML = "🔴";
         }
     }
@@ -47,15 +47,18 @@ class Game extends React.Component {
         this.connection.onmessage = evt => {
             console.log(evt)
             let data = JSON.parse(evt.data)
-            if(data.error){
+            if (data.error) {
                 alert(data.error)
-            }else if (data.opened && data.opened.game_status === "lost") {
+                if (data.error === "The Game you requested does not exist") {
+                    window.open('/home', '_self', 'noopener,noreferrer')
+                }
+            } else if (data.opened && data.opened.game_status === "lost") {
                 alert("You lost the game")
             } else if (data.opened && data.opened.status === "You Won!") {
                 alert("You won the game")
             } else if (data.field) {
+                this.setState({ n_cols: data.n_cols, n_rows: data.n_rows })
                 for (var el of data.field) {
-                    this.setState({ n_cols: data.n_cols, n_rows: data.n_rows })
                     this.check_el(el)
                 }
             } else if (data.n_cols && data.n_rows) {
@@ -63,7 +66,7 @@ class Game extends React.Component {
             } else if (data.flagged) {
                 if (data.flagged.remove) {
                     document.getElementById(data.flagged.col + "-" + data.flagged.row).getElementsByTagName("p")[0].innerHTML = "";
-                } else if(data.flagged.success) {
+                } else if (data.flagged.success) {
                     document.getElementById(data.flagged.col + "-" + data.flagged.row).getElementsByTagName("p")[0].innerHTML = "🔴";
                 } else {
                     alert(data.flagged.status)
@@ -81,9 +84,9 @@ class Game extends React.Component {
     }
     handleClick(e) {
         if (e.nativeEvent.which === 1) {
-            this.connection.send(JSON.stringify({ col: e.target.getAttribute('col'), row: e.target.getAttribute('row'), intent: "open" }))
+            this.connection.send(JSON.stringify({ col: e.currentTarget.getAttribute('col'), row: e.currentTarget.getAttribute('row'), intent: "open" }))
         } else if (e.nativeEvent.which === 3) {
-            this.connection.send(JSON.stringify({ col: e.target.getAttribute('col'), row: e.target.getAttribute('row'), intent: "flag" }))
+            this.connection.send(JSON.stringify({ col: e.currentTarget.getAttribute('col'), row: e.currentTarget.getAttribute('row'), intent: "flag" }))
             e.preventDefault()
         }
     }
