@@ -40,7 +40,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SMARTGUIDE_HOLZKIRCHEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MULTI_MINESWEEPER_9A0A1 }}'
           projectId: smartguide-holzkirchen
           expires: never
           channelId: live
