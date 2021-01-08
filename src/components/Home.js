@@ -29,6 +29,7 @@ export default class Home extends React.Component {
     join_game() {
         const connection = new WebSocket(this.props.domain+'/join')
         connection.onopen = () => {
+            connection.send(JSON.stringify({code: this.state.code}))
             connection.onmessage = evt => {
                 console.log(evt)
                 let data = JSON.parse(evt.data)
@@ -36,7 +37,7 @@ export default class Home extends React.Component {
                 if (data.error) {
                     alert(evt.error)
                 }
-                if (data.succes === "") {
+                if (data.exists) {
                     connection.close()
                     window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
                 }
@@ -57,8 +58,7 @@ export default class Home extends React.Component {
                 <button onClick={() => this.create_new_game()}>Create</button>
                 <p>Join an existing game</p>
                 <input value={this.state.code} onChange={(e) => this.setState({ code: e.target.value })} type="number" placeholder="Code to join" />
-                {//<button onClick={() => connection.send({ code: this.state.code })}>Join</button>
-    }
+                <button onClick={() => this.join_game()}>Join</button>
                 {this.state.messages}
             </div>
         )
