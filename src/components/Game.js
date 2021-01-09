@@ -6,8 +6,9 @@ import { withRouter } from 'react-router-dom';
 class Game extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { n_cols: 0, n_rows: 0 }
-        this.connection = new WebSocket(this.props.domain + '/game/' + this.props.match.params.code)
+        this.state = { n_cols: 0, n_rows: 0, mines: 0, flagged: 0, lost: false}
+        this.field = [];
+        this.connection = new WebSocket(this.props.wsdomain + '/game/' + this.props.match.params.code)
     }
     check_el(el) {
         var doc = document.getElementById(el.col + "-" + el.row)
@@ -43,31 +44,62 @@ class Game extends React.Component {
             child.innerHTML = "🔴";
         }
     }
+    lost_animation() {
+        var t = [];
+        for(var [index, el] of this.field.entries()) {
+            if(el.flagged){
+                //Do nothing
+            }else if (el.mine) {
+                t[index] = setTimeout((function(el){
+                    return function(){
+                    console.log(el)
+                    document.getElementById(el.col + "-" + el.row).getElementsByTagName("p")[0].innerHTML = "💣";
+                }})(el),10*index)
+            }
+        }
+        alert("You lost the game")
+    }
     componentDidMount() {
         this.connection.onmessage = evt => {
             console.log(evt)
             let data = JSON.parse(evt.data)
+            if(data.opened && data.opened.n_mines){
+                this.setState({n_mines: data.opened.n_mines})
+            }
             if (data.error) {
                 alert(data.error)
                 if (data.error === "The Game you requested does not exist") {
                     window.open('/home', '_self', 'noopener,noreferrer')
                 }
             } else if (data.opened && data.opened.game_status === "lost") {
-                alert("You lost the game")
+                this.lost_animation();
+                this.setState({lost: true})
             } else if (data.opened && data.opened.status === "You Won!") {
-                alert("You won the game")
+                alert("You won the game!")
             } else if (data.field) {
+                this.field = data.field;
                 this.setState({ n_cols: data.n_cols, n_rows: data.n_rows })
+                var mines = 0;
+                var flagged = 0;
                 for (var el of data.field) {
                     this.check_el(el)
+                    if(el.mine){
+                        mines++;
+                    }
+                    if(el.flagged){
+                        flagged++;
+                    }
                 }
+                this.setState({mines, flagged})
             } else if (data.n_cols && data.n_rows) {
                 this.setState({ n_cols: data.n_cols, n_rows: data.n_rows })
             } else if (data.flagged) {
                 if (data.flagged.remove) {
                     document.getElementById(data.flagged.col + "-" + data.flagged.row).getElementsByTagName("p")[0].innerHTML = "";
+                    this.setState({flagged: this.state.flagged-1})
                 } else if (data.flagged.success) {
                     document.getElementById(data.flagged.col + "-" + data.flagged.row).getElementsByTagName("p")[0].innerHTML = "🔴";
+                    this.setState({flagged: this.state.flagged+1})
                 } else {
                     alert(data.flagged.status)
                 }
@@ -90,6 +122,26 @@ class Game extends React.Component {
             e.preventDefault()
         }
     }
+    create_new_game() {
+        const connection = new WebSocket(this.props.wsdomain+'/create')
+        connection.onopen = () => {
+            connection.send(JSON.stringify({ n_cols: this.state.n_cols, n_rows: this.state.n_rows, n_mines: this.state.n_mines, code: this.props.match.params.code, solvable: this.state.solvable }))
+            // listen to onmessage event
+            connection.onmessage = evt => {
+                console.log(evt)
+                let data = JSON.parse(evt.data)
+                console.log(data)
+                if (data.error) {
+                    alert(evt.error)
+                }
+                if (data.succes === "Game succesfully created") {
+                    connection.close()
+                    window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
+                }
+            };
+            // window.open('/game/'+this.state.id, '_self', 'noopener,noreferrer')
+        }
+    }
     render() {
         var rows = [];
         for (var i = 0; i < this.state.n_rows; i++) {
@@ -105,6 +157,8 @@ class Game extends React.Component {
         return (
             <div className="gameField">
                 {rows}
+                <button onClick={() => this.create_new_game()}>Restart</button>
+                {this.state.lost?null:<p>{this.state.mines-this.state.flagged} 🔴</p>}
             </div>
         )
     }

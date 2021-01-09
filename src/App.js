@@ -4,7 +4,8 @@ import Game from './components/Game';
 import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import './App.css';
 
-const domain = "wss://multiplayersweeper.herokuapp.com";
+const domain = "http://localhost:8000";
+const wsdomain = "ws://localhost:8000";
 export default class App extends React.Component {
   render(){
     return (
@@ -12,7 +13,7 @@ export default class App extends React.Component {
         <Router>
           <Switch>
             <Route path="/home" render={() => <Home domain={domain} />} />
-            <Route path="/game/:code" render={() => <Game domain={domain} />} />
+            <Route path="/game/:code" render={() => <Game domain={domain} wsdomain={wsdomain} />} />
             <Redirect path="*" to="/home" />
           </Switch>
         </Router>
