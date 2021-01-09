@@ -11,6 +11,7 @@ class Game extends React.Component {
         this.connection = new WebSocket(this.props.wsdomain + '/game/' + this.props.match.params.code)
     }
     check_el(el) {
+        console.log(el)
         var doc = document.getElementById(el.col + "-" + el.row)
         var child = doc.getElementsByTagName("p")[0]
         if (!el.opened) {
@@ -62,6 +63,7 @@ class Game extends React.Component {
     }
     componentDidMount() {
         this.connection.onmessage = evt => {
+            console.log(evt)
             let data = JSON.parse(evt.data)
             if (data.opened && data.opened.n_mines) {
                 this.setState({ n_mines: data.opened.n_mines })
@@ -78,7 +80,9 @@ class Game extends React.Component {
                 alert("You won the game!")
             } else if (data.field) {
                 this.field = data.field;
-                this.setState({ n_cols: data.n_cols, n_rows: data.n_rows })
+                if(this.state.n_cols === 0) {
+                    this.setState({ n_cols: data.n_cols, n_rows: data.n_rows })
+                }
                 var mines = 0;
                 var flagged = 0;
                 console.log(data.field)
@@ -104,11 +108,11 @@ class Game extends React.Component {
                 } else {
                     alert(data.flagged.status)
                 }
-            } else {
-                console.log(data.opened)
-                for (var el of data.opened) {
-                    console.log(el)
-                    this.check_el(el)
+            } else if(data.opened) {
+                //Doesn't work on first open
+                //Field is recieved at the same time (problem with render I gues)
+                for (var el2 of data.opened) {
+                    this.check_el(el2)
                 }
             }
         }
