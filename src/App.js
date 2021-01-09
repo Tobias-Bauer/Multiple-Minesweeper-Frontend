@@ -4,8 +4,8 @@ import Game from './components/Game';
 import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import './App.css';
 
-const domain = "http://localhost:8000";
-const wsdomain = "ws://localhost:8000";
+const domain = "https://multiplayersweeper.herokuapp.com";
+const wsdomain = "wss://multiplayersweeper.herokuapp.com";
 export default class App extends React.Component {
   render(){
     return (
