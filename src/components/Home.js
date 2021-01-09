@@ -33,25 +33,7 @@ export default class Home extends React.Component {
                 (error) => {
                     console.log(error)
                 }
-            )/*
-        const connection = new WebSocket(this.props.domain+'/create')
-        connection.onopen = () => {
-            connection.send(JSON.stringify({ n_cols: this.state.n_cols, n_rows: this.state.n_rows, n_mines: this.state.n_mines, code: this.state.code, solvable: this.state.solvable }))
-            // listen to onmessage event
-            connection.onmessage = evt => {
-                console.log(evt)
-                let data = JSON.parse(evt.data)
-                console.log(data)
-                if (data.error) {
-                    alert(evt.error)
-                }
-                if (data.succes === "Game succesfully created") {
-                    connection.close()
-                    window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
-                }
-            };
-            // window.open('/game/'+this.state.id, '_self', 'noopener,noreferrer')
-        }*/
+            )
     }
     join_game() {
         const connection = new WebSocket(this.props.domain + '/join')
