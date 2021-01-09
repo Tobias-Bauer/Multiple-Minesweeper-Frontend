@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 class Game extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { n_cols: 0, n_rows: 0, mines: 0, flagged: 0, lost: false}
+        this.state = { n_cols: 0, n_rows: 0, mines: 0, flagged: 0, lost: false }
         this.field = [];
         this.connection = new WebSocket(this.props.wsdomain + '/game/' + this.props.match.params.code)
     }
@@ -46,25 +46,25 @@ class Game extends React.Component {
     }
     lost_animation() {
         var t = [];
-        for(var [index, el] of this.field.entries()) {
-            if(el.flagged){
+        for (var [index, el] of this.field.entries()) {
+            if (el.flagged) {
                 //Do nothing
-            }else if (el.mine) {
-                t[index] = setTimeout((function(el){
-                    return function(){
-                    console.log(el)
-                    document.getElementById(el.col + "-" + el.row).getElementsByTagName("p")[0].innerHTML = "💣";
-                }})(el),10*index)
+            } else if (el.mine) {
+                t[index] = setTimeout((function (el) {
+                    return function () {
+                        console.log(el)
+                        document.getElementById(el.col + "-" + el.row).getElementsByTagName("p")[0].innerHTML = "💣";
+                    }
+                })(el), 10 * index)
             }
         }
         alert("You lost the game")
     }
     componentDidMount() {
         this.connection.onmessage = evt => {
-            console.log(evt)
             let data = JSON.parse(evt.data)
-            if(data.opened && data.opened.n_mines){
-                this.setState({n_mines: data.opened.n_mines})
+            if (data.opened && data.opened.n_mines) {
+                this.setState({ n_mines: data.opened.n_mines })
             }
             if (data.error) {
                 alert(data.error)
@@ -73,7 +73,7 @@ class Game extends React.Component {
                 }
             } else if (data.opened && data.opened.game_status === "lost") {
                 this.lost_animation();
-                this.setState({lost: true})
+                this.setState({ lost: true })
             } else if (data.opened && data.opened.status === "You Won!") {
                 alert("You won the game!")
             } else if (data.field) {
@@ -84,41 +84,45 @@ class Game extends React.Component {
                 console.log(data.field)
                 for (var el of data.field) {
                     this.check_el(el)
-                    if(el.mine){
+                    if (el.mine) {
                         mines++;
                     }
-                    if(el.flagged){
+                    if (el.flagged) {
                         flagged++;
                     }
                 }
-                this.setState({mines, flagged})
+                this.setState({ mines, flagged })
             } else if (data.n_cols && data.n_rows) {
                 this.setState({ n_cols: data.n_cols, n_rows: data.n_rows })
             } else if (data.flagged) {
                 if (data.flagged.remove) {
                     document.getElementById(data.flagged.col + "-" + data.flagged.row).getElementsByTagName("p")[0].innerHTML = "";
-                    this.setState({flagged: this.state.flagged-1})
+                    this.setState({ flagged: this.state.flagged - 1 })
                 } else if (data.flagged.success) {
                     document.getElementById(data.flagged.col + "-" + data.flagged.row).getElementsByTagName("p")[0].innerHTML = "🔴";
-                    this.setState({flagged: this.state.flagged+1})
+                    this.setState({ flagged: this.state.flagged + 1 })
                 } else {
                     alert(data.flagged.status)
                 }
             } else {
-                if (!data.mine) {
-                    console.log(data.opened)
-                    for (var element of data.opened) {
-                        console.log(element)
-                        this.check_el(element)
-                    }
+                console.log(data.opened)
+                for (var el of data.opened) {
+                    console.log(el)
+                    this.check_el(el)
                 }
             }
         }
     }
     handleClick(e) {
         if (e.nativeEvent.which === 1) {
+            var audio = new Audio("../Sounds/punch.mp3")
+            audio.play()
+            audio.volume = .1
             this.connection.send(JSON.stringify({ col: e.currentTarget.getAttribute('col'), row: e.currentTarget.getAttribute('row'), intent: "open" }))
         } else if (e.nativeEvent.which === 3) {
+            var audio2 = new Audio("../Sounds/csgo-defuse-sound-effect.mp3")
+            audio2.play()
+            audio2.volume = .1
             this.connection.send(JSON.stringify({ col: e.currentTarget.getAttribute('col'), row: e.currentTarget.getAttribute('row'), intent: "flag" }))
             e.preventDefault()
         }
@@ -139,7 +143,7 @@ class Game extends React.Component {
             <div className="gameField">
                 {rows}
                 <button onClick={() => this.connection.send(JSON.stringify({ intent: "restart", n_cols: this.state.n_col, n_rows: this.state.n_rows, n_mines: this.state.mines }))}>Restart</button>
-                {this.state.lost?null:<p>{this.state.mines-this.state.flagged} 🔴</p>}
+                {this.state.lost ? null : <p>{this.state.mines - this.state.flagged} 🔴</p>}
             </div>
         )
     }
