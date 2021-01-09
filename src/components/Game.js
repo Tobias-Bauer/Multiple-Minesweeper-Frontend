@@ -81,6 +81,7 @@ class Game extends React.Component {
                 this.setState({ n_cols: data.n_cols, n_rows: data.n_rows })
                 var mines = 0;
                 var flagged = 0;
+                console.log(data.field)
                 for (var el of data.field) {
                     this.check_el(el)
                     if(el.mine){
