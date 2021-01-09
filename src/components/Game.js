@@ -137,7 +137,7 @@ class Game extends React.Component {
         return (
             <div className="gameField">
                 {rows}
-                <button onClick={() => this.connection.send(JSON.stringify({ intent: "restart" }))}>Restart</button>
+                <button onClick={() => this.connection.send(JSON.stringify({ intent: "restart", n_cols: this.state.n_col, n_rows: this.state.n_rows, n_mines: this.state.mines }))}>Restart</button>
                 {this.state.lost?null:<p>{this.state.mines-this.state.flagged} 🔴</p>}
             </div>
         )
