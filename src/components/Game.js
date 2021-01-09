@@ -122,26 +122,6 @@ class Game extends React.Component {
             e.preventDefault()
         }
     }
-    create_new_game() {
-        const connection = new WebSocket(this.props.wsdomain+'/create')
-        connection.onopen = () => {
-            connection.send(JSON.stringify({ n_cols: this.state.n_cols, n_rows: this.state.n_rows, n_mines: this.state.n_mines, code: this.props.match.params.code, solvable: this.state.solvable }))
-            // listen to onmessage event
-            connection.onmessage = evt => {
-                console.log(evt)
-                let data = JSON.parse(evt.data)
-                console.log(data)
-                if (data.error) {
-                    alert(evt.error)
-                }
-                if (data.succes === "Game succesfully created") {
-                    connection.close()
-                    window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
-                }
-            };
-            // window.open('/game/'+this.state.id, '_self', 'noopener,noreferrer')
-        }
-    }
     render() {
         var rows = [];
         for (var i = 0; i < this.state.n_rows; i++) {
@@ -157,7 +137,7 @@ class Game extends React.Component {
         return (
             <div className="gameField">
                 {rows}
-                <button onClick={() => this.create_new_game()}>Restart</button>
+                <button onClick={() => this.connection.send(JSON.stringify({ intent: "restart" }))}>Restart</button>
                 {this.state.lost?null:<p>{this.state.mines-this.state.flagged} 🔴</p>}
             </div>
         )
