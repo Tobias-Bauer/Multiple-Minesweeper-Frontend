@@ -72,7 +72,7 @@ export default class Home extends React.Component {
     handleChange(e) {
         clearTimeout(this.timer);
         this.setState({ code: e.target.value })
-        this.timer = setTimeout(this.triggerAvailable(this.props.domain), 1000);
+        this.timer = setTimeout(() => this.triggerAvailable(this.props.domain), 1000);
     }
     handleKeyDown(e) {
         if (e.keyCode === 13) {
