@@ -62,7 +62,7 @@ class Game extends React.Component {
         alert("You lost the game")
     }
     componentDidMount() {
-        this.ws.onerror = error => {
+        this.connection.onerror = error => {
             console.log(error)
         };
         this.connection.onmessage = evt => {
