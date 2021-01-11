@@ -10,17 +10,17 @@ export default class Home extends React.Component {
         fetch(this.props.domain + '/create', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             headers: {
-              'Content-Type': 'application/json',
-              "Access-Control-Allow-Origin": "*"
-              // 'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin": "*"
+                // 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: JSON.stringify({ n_cols: this.state.n_cols, n_rows: this.state.n_rows, n_mines: this.state.n_mines, code: this.state.code, solvable: this.state.solvable }) // body data type must match "Content-Type" header
-          })
+        })
             .then(res => res.json())
             .then(
                 (result) => {
                     console.log(result)
-                    if(result.error) {
+                    if (result.error) {
                         alert(result.error)
                     }
                     if (result.success === "Game successfully created") {
@@ -36,22 +36,34 @@ export default class Home extends React.Component {
             )
     }
     join_game() {
-        const connection = new WebSocket(this.props.domain + '/join')
-        connection.onopen = () => {
-            connection.send(JSON.stringify({ code: this.state.code }))
-            connection.onmessage = evt => {
-                console.log(evt)
-                let data = JSON.parse(evt.data)
-                console.log(data)
-                if (data.error) {
-                    alert(data.error)
+        fetch(this.props.domain + '/create', {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin": "*"
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify({ code: this.state.code }) // body data type must match "Content-Type" header
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    if (result.error) {
+                        alert(result.error)
+                    }
+                    if (result.exists) {
+                        connection.close()
+                        window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
+                    }
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    console.log(error)
                 }
-                if (data.exists) {
-                    connection.close()
-                    window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
-                }
-            };
-        }
+            )
     }
     render() {
         return (
