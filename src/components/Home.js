@@ -36,7 +36,7 @@ export default class Home extends React.Component {
             )
     }
     join_game() {
-        fetch(this.props.domain + '/create', {
+        fetch(this.props.domain + '/join', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             headers: {
                 'Content-Type': 'application/json',
