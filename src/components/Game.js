@@ -109,8 +109,7 @@ class Game extends React.Component {
                     alert(data.flagged.status)
                 }
             } else if(data.opened) {
-                //Doesn't work on first open
-                //Field is recieved at the same time (problem with render I gues)
+                this.field = data.opened;
                 for (var el2 of data.opened) {
                     this.check_el(el2)
                 }

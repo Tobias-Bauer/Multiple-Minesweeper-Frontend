@@ -53,7 +53,6 @@ export default class Home extends React.Component {
                         alert(result.error)
                     }
                     if (result.exists) {
-                        connection.close()
                         window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
                     }
                 },
