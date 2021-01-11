@@ -4,7 +4,7 @@ import './Home.scss'
 export default class Home extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { exists: null, id: null, messages: [], n_cols: "", n_rows: "", code: "", n_mines: "", solvable: false }
+        this.state = { name: "", exists: null, id: null, messages: [], n_cols: "", n_rows: "", code: "", n_mines: "", solvable: false }
     }
     create_new_game() {
         fetch(this.props.domain + '/create', {
@@ -24,7 +24,11 @@ export default class Home extends React.Component {
                         alert(result.error)
                     }
                     if (result.success === "Game successfully created") {
-                        window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
+                        if (this.state.name !== "") {
+                            window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
+                        }else{
+                            alert("Please enter a name!")
+                        }
                     }
                 },
                 // Note: it's important to handle errors here
@@ -53,7 +57,11 @@ export default class Home extends React.Component {
                         alert(result.error)
                     }
                     if (result.exists) {
-                        window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
+                        if (this.state.name !== "") {
+                            window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
+                        }else{
+                            alert("Please enter a name!")
+                        }
                     } else {
                         alert("Game doesn't exist!")
                     }
@@ -96,7 +104,7 @@ export default class Home extends React.Component {
                     if (result.error) {
                         alert(result.error)
                     }
-                    this.setState({exists: result.exists})
+                    this.setState({ exists: result.exists })
                 },
                 (error) => {
                     console.log(error)
@@ -110,16 +118,18 @@ export default class Home extends React.Component {
                 <p>Create a new game</p>
                 <input className="size" value={this.state.n_cols} onChange={(e) => this.setState({ n_cols: e.target.value })} type="number" placeholder="Size between 5 and 60" />
                 <input className="size" value={this.state.n_rows} onChange={(e) => this.setState({ n_rows: e.target.value })} type="number" placeholder="Size between 5 and 60" />
-                <input className="size" value={this.state.n_mines} onChange={(e) => this.setState({ n_mines: e.target.value })} type="number" placeholder="Mines between 1 and 2600" />
-                <input type="checkbox" id="check3" value={this.state.solvable} onChange={(e) => this.setState({ solvable: e.target.value })} name="fsa" />
+                <input className="size" value={this.state.n_mines} onChange={(e) => this.setState({ n_mines: e.target.value })} type="number" placeholder="Mines about 1/6 to 1/4 of the field size" />
+                <input value={this.state.name} onChange={(e) => this.setState({ name: e.target.value })} type="number" placeholder="Set your name" />
+                <input type="checkbox" id="check3" value={this.state.solvable} onChange={(e) => this.setState({ solvable: e.target.value })} />
                 <label htmlFor="check3">solvable</label>
                 <input value={this.state.code} onChange={(e) => this.handleChange(e)} type="number" placeholder="Code to join" />
                 <button onClick={() => this.create_new_game()}>Create</button>
-                {this.state.exists?<p>{this.state.exists?"🔴":"🟢"}</p>:null}
+                {this.state.exists !== null ? <p>{this.state.exists ? "🔴" : "🟢"}</p> : null}
                 <p>Join an existing game</p>
+                <input value={this.state.name} onChange={(e) => this.setState({ name: e.target.value })} type="number" placeholder="Set your name" />
                 <input value={this.state.code} onChange={(e) => this.handleChange(e)} type="number" placeholder="Code to join" />
+                {this.state.exists !== null ? <p>{this.state.exists ? "🟢" : "🔴"}</p> : null}
                 <button onClick={() => this.join_game()}>Join</button>
-                {this.state.exists?<p>{this.state.exists?"🟢":"🔴"}</p>:null}
                 {this.state.messages}
             </div>
         )

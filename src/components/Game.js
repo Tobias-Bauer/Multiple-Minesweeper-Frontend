@@ -6,9 +6,12 @@ import { withRouter } from 'react-router-dom';
 class Game extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { n_cols: 0, n_rows: 0, mines: 0, flagged: 0, lost: false }
+        this.state = { n_cols: 0, n_rows: 0, mines: 0, flagged: 0, lost: false}
         this.field = [];
         this.connection = new WebSocket(this.props.wsdomain + '/game/' + this.props.match.params.code)
+        this.connection.onopen = data => {
+            this.connection.send(JSON.stringify({intent: "name", name: this.props.match.params.name}))
+        }
     }
     check_el(el) {
         var doc = document.getElementById(el.col + "-" + el.row)
@@ -44,7 +47,7 @@ class Game extends React.Component {
             child.innerHTML = "🔴";
         }
     }
-    lost_animation() {
+    lost_animation(msg) {
         var t = [];
         for (var [index, el] of this.field.entries()) {
             if (el.flagged) {
@@ -57,7 +60,7 @@ class Game extends React.Component {
                 })(el), 10 * index)
             }
         }
-        alert("You lost the game")
+        alert(msg)
     }
     componentDidMount() {
         this.connection.onerror = error => {
@@ -75,7 +78,7 @@ class Game extends React.Component {
                     window.open('/home', '_self', 'noopener,noreferrer')
                 }
             } else if (data.opened && data.opened.game_status === "lost") {
-                this.lost_animation();
+                this.lost_animation(data.message);
                 this.setState({ lost: true })
             } else if (data.opened && data.opened.status === "You Won!") {
                 alert("You won the game!")

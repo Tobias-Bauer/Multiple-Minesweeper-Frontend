@@ -13,7 +13,7 @@ export default class App extends React.Component {
         <Router>
           <Switch>
             <Route path="/home" render={() => <Home domain={domain} />} />
-            <Route path="/game/:code" render={() => <Game domain={domain} wsdomain={wsdomain} />} />
+            <Route path="/game/:code/:name" render={() => <Game domain={domain} wsdomain={wsdomain} />} />
             <Redirect path="*" to="/home" />
           </Switch>
         </Router>
