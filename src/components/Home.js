@@ -25,7 +25,7 @@ export default class Home extends React.Component {
                     }
                     if (result.success === "Game successfully created") {
                         if (this.state.name !== "") {
-                            window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
+                            window.open('/game/' + this.state.code+'/'+this.state.name, '_self', 'noopener,noreferrer')
                         }else{
                             alert("Please enter a name!")
                         }
@@ -58,7 +58,7 @@ export default class Home extends React.Component {
                     }
                     if (result.exists) {
                         if (this.state.name !== "") {
-                            window.open('/game/' + this.state.code, '_self', 'noopener,noreferrer')
+                            window.open('/game/' + this.state.code+'/'+this.state.name, '_self', 'noopener,noreferrer')
                         }else{
                             alert("Please enter a name!")
                         }
@@ -119,14 +119,14 @@ export default class Home extends React.Component {
                 <input className="size" value={this.state.n_cols} onChange={(e) => this.setState({ n_cols: e.target.value })} type="number" placeholder="Size between 5 and 60" />
                 <input className="size" value={this.state.n_rows} onChange={(e) => this.setState({ n_rows: e.target.value })} type="number" placeholder="Size between 5 and 60" />
                 <input className="size" value={this.state.n_mines} onChange={(e) => this.setState({ n_mines: e.target.value })} type="number" placeholder="Mines about 1/6 to 1/4 of the field size" />
-                <input value={this.state.name} onChange={(e) => this.setState({ name: e.target.value })} type="number" placeholder="Set your name" />
+                <input value={this.state.name} onChange={(e) => this.setState({ name: e.target.value })} placeholder="Set your name" />
                 <input type="checkbox" id="check3" value={this.state.solvable} onChange={(e) => this.setState({ solvable: e.target.value })} />
                 <label htmlFor="check3">solvable</label>
                 <input value={this.state.code} onChange={(e) => this.handleChange(e)} type="number" placeholder="Code to join" />
                 <button onClick={() => this.create_new_game()}>Create</button>
                 {this.state.exists !== null ? <p>{this.state.exists ? "🔴" : "🟢"}</p> : null}
                 <p>Join an existing game</p>
-                <input value={this.state.name} onChange={(e) => this.setState({ name: e.target.value })} type="number" placeholder="Set your name" />
+                <input value={this.state.name} onChange={(e) => this.setState({ name: e.target.value })} placeholder="Set your name" />
                 <input value={this.state.code} onChange={(e) => this.handleChange(e)} type="number" placeholder="Code to join" />
                 {this.state.exists !== null ? <p>{this.state.exists ? "🟢" : "🔴"}</p> : null}
                 <button onClick={() => this.join_game()}>Join</button>
