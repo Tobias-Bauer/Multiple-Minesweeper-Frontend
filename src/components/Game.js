@@ -62,6 +62,9 @@ class Game extends React.Component {
         alert("You lost the game")
     }
     componentDidMount() {
+        this.ws.onerror = error => {
+            console.log(error)
+        };
         this.connection.onmessage = evt => {
             console.log(evt)
             let data = JSON.parse(evt.data)
