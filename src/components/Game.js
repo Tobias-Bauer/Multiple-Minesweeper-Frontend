@@ -11,7 +11,6 @@ class Game extends React.Component {
         this.connection = new WebSocket(this.props.wsdomain + '/game/' + this.props.match.params.code)
     }
     check_el(el) {
-        console.log(el)
         var doc = document.getElementById(el.col + "-" + el.row)
         var child = doc.getElementsByTagName("p")[0]
         if (!el.opened) {
@@ -53,7 +52,6 @@ class Game extends React.Component {
             } else if (el.mine) {
                 t[index] = setTimeout((function (el) {
                     return function () {
-                        console.log(el)
                         document.getElementById(el.col + "-" + el.row).getElementsByTagName("p")[0].innerHTML = "💣";
                     }
                 })(el), 10 * index)
@@ -64,10 +62,9 @@ class Game extends React.Component {
     componentDidMount() {
         this.connection.onerror = error => {
             console.log(error)
+            this.connection.close()
         };
-        
         this.connection.onmessage = evt => {
-            console.log(evt)
             let data = JSON.parse(evt.data)
             if (data.opened && data.opened.n_mines) {
                 this.setState({ n_mines: data.opened.n_mines })
@@ -89,7 +86,6 @@ class Game extends React.Component {
                 }
                 var mines = 0;
                 var flagged = 0;
-                console.log(data.field)
                 for (var el of data.field) {
                     this.check_el(el)
                     if (el.mine) {
