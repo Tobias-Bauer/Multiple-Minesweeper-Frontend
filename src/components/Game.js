@@ -121,12 +121,12 @@ class Game extends React.Component {
     }
     handleClick(e) {
         if (e.nativeEvent.which === 1) {
-            var audio = new Audio("../Sounds/punch.mp3")
+            var audio = new Audio(require("../Sounds/punch.mp3").default)
             audio.play()
             audio.volume = .1
             this.connection.send(JSON.stringify({ col: e.currentTarget.getAttribute('col'), row: e.currentTarget.getAttribute('row'), intent: "open" }))
         } else if (e.nativeEvent.which === 3) {
-            var audio2 = new Audio("../Sounds/csgo-defuse-sound-effect.mp3")
+            var audio2 = new Audio(require("../Sounds/csgo-defuse-sound-effect.mp3").default)
             audio2.play()
             audio2.volume = .1
             this.connection.send(JSON.stringify({ col: e.currentTarget.getAttribute('col'), row: e.currentTarget.getAttribute('row'), intent: "flag" }))
